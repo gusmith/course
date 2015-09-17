@@ -63,7 +63,9 @@ the contents of c
 main ::
   IO ()
 main =
-  error "todo: Course.FileIO#main"
+  getArgs >>= \l -> case l of
+                      Nil -> putStrLn "No argument provided"
+                      h:._ -> run h
 
 type FilePath =
   Chars
@@ -72,31 +74,51 @@ type FilePath =
 run ::
   Chars
   -> IO ()
-run =
-  error "todo: Course.FileIO#run"
-
+run a =
+  do
+    f <- readFile a -- <- means "got bind by"
+    c <- getFiles (lines f)
+    printFiles c 
+--  readFile a >>= \f ->
+--  getFiles (lines f) >>= \c -> 
+--  printFiles c
+  
 getFiles ::
   List FilePath
   -> IO (List (FilePath, Chars))
 getFiles =
-  error "todo: Course.FileIO#getFiles"
+  sequence . ((<$>) getFile)
 
 getFile ::
   FilePath
   -> IO (FilePath, Chars)
-getFile =
-  error "todo: Course.FileIO#getFile"
+getFile = 
+  lift2 (<$>) (,) readFile
+--  do a <- (,)
+--     b <- readFile
+--     pure(a <$> b)  
+--getFile f =
+--  ((,) f) <$> readFile f
+--  (\c -> (f, c)) <$> readFile f
+--  do
+--    c <- readFile f
+--    pure (f, c)
+--  readFile f >>= \c -> pure (f, c)
 
 printFiles ::
   List (FilePath, Chars)
   -> IO ()
-printFiles =
-  error "todo: Course.FileIO#printFiles"
-
+--printFiles x =
+  --void (sequence ((\(p, c) -> printFile p c) <$> x))
+  --void (sequence ((<$>) (uncurry printFile) x))
+printFiles = 
+  void . sequence . (<$>) (uncurry printFile)
+  
 printFile ::
   FilePath
   -> Chars
   -> IO ()
-printFile =
-  error "todo: Course.FileIO#printFile"
+printFile p c =
+  putStrLn ("the name if the file: " ++ p) *>
+  putStrLn ("the content: " ++ c)
 
