@@ -68,7 +68,7 @@ infixr 1 =<<
   f (a -> b)
   -> f a
   -> f b
-(<*>) =
+(<*>) f a =
   error "todo: Course.Bind#(<*>)"
 
 infixl 4 <*>
@@ -94,8 +94,8 @@ instance Bind List where
     (a -> List b)
     -> List a
     -> List b
-  (=<<) =
-    error "todo: Course.Bind (=<<)#instance List"
+  (=<<) _ Nil = Nil
+  (=<<) f (t:.q) = (++) (f t) ((=<<) f q)
 
 -- | Binds a function on an Optional.
 --
@@ -106,8 +106,8 @@ instance Bind Optional where
     (a -> Optional b)
     -> Optional a
     -> Optional b
-  (=<<) =
-    error "todo: Course.Bind (=<<)#instance Optional"
+  (=<<) _ Empty = Empty
+  (=<<) f (Full a) = f a
 
 -- | Binds a function on the reader ((->) t).
 --
@@ -118,8 +118,7 @@ instance Bind ((->) t) where
     (a -> ((->) t b))
     -> ((->) t a)
     -> ((->) t b)
-  (=<<) =
-    error "todo: Course.Bind (=<<)#instance ((->) t)"
+  (=<<) f g t = f (g t) t
 
 -- | Flattens a combined structure to a single structure.
 --

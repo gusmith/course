@@ -103,8 +103,9 @@ sequence ::
   Applicative f =>
   List (f a)
   -> f (List a)
-sequence Nil = pure Nil
-sequence (h:.t) = ((:.) <$> h) <*> sequence t
+--sequence Nil = pure Nil
+--sequence (h:.t) = ((:.) <$> h) <*> sequence t
+sequence = foldRight (lift2 (:.)) (pure Nil)
 --sequence Nil = pure Nil
 --sequence t:.q = lift2 
 
